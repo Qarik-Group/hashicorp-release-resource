@@ -28,9 +28,16 @@ resource_types:
 
 ### `in`: Fetch release
 
+Downloads all (or a subset specified by `regexp` parameter) of builds for a version.
+
+Also creates files:
+
+* `version` file with the current version
+* `project` file with the project name
+
 #### Parameters
 
-* None initially
+* `regexp`: *Optional.* If provided, only matching files will be downloaded. Otherwise all builds will be downloaded.
 
 ### `out`: Not implemented
 
