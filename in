@@ -50,12 +50,4 @@ else
   exit 1
 fi
 
-jq -n "[
-  { version: { version: \"$latest_version\" } },
-  {
-    metadata: [
-      { name: \"version\", value: \"$latest_version\" },
-      { name: \"project\", value: \"$source_project\" }
-    ]
-  }
-]" >&3
+jq -n --arg version "${latest_version}" '{version: { version: $version }}' >&3

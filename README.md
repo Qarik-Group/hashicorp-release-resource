@@ -9,12 +9,25 @@ You can use the docker image by defining the [resource type](http://concourse.ci
 For example:
 
 ```yaml
-
 resource_types:
 - name: hashicorp-release
   type: docker-image
   source:
     repository: starkandwayne/hashicorp-release-resource
+
+resources:
+  - name: vault
+    type: hashicorp-release
+    source:
+      project: vault
+```
+
+To get the latest `vault` build for `linux_amd64`:
+
+```yaml
+- get: vault
+  params:
+    regexp: linux_amd64
 ```
 
 ## Source Configuration
@@ -47,6 +60,6 @@ If you want to upload a new Hashicorp version, perhaps visit https://www.hashico
 
 ```
 docker_user=starkandwayne
-docker build -t $docker_user/hashicorp-release .
-docker push $docker_user/hashicorp-release
+docker build -t $docker_user/hashicorp-release-resource .
+docker push $docker_user/hashicorp-release-resource
 ```
