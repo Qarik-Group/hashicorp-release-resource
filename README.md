@@ -35,3 +35,11 @@ resource_types:
 ### `out`: Not implemented
 
 If you want to upload a new Hashicorp version, perhaps visit https://www.hashicorp.com/jobs/
+
+## Build docker image
+
+```
+docker_user=starkandwayne
+docker build -t $docker_user/hashicorp-release .
+docker push $docker_user/hashicorp-release
+```
