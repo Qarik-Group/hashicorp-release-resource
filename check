@@ -25,4 +25,6 @@ latest_version=$(curl -s https://releases.hashicorp.com/${source_project}/index.
 
 >&2 echo "Latest version $latest_version"
 
-echo "[{\"version\":\"$latest_version\"}]"
+jq -n "[
+  { version: \"$latest_version\" }
+]" >&3
