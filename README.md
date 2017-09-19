@@ -19,7 +19,7 @@ resource_types:
 
 ## Source Configuration
 
-* `project`: *Required.* The Hashicorp roject name.
+* `project`: *Required.* The Hashicorp project name.
     Example: `vault`
 
 ## Behavior
