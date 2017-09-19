@@ -36,6 +36,26 @@ echo "$source_project" > project
 
 build_urls=$(curl -s https://releases.hashicorp.com/${source_project}/index.json | jq -r ".versions[\"${version}\"].builds[].url")
 if [[ ! -z $params_regexp ]]; then
+  set +e
   build_urls=$(echo "${build_urls}" | grep ${params_regexp})
+  set -e
 fi
-echo "$build_urls" | xargs -L1 curl -O
+if [[ ! -z $build_urls ]]; then
+  for url in "$build_urls"; do
+    >&2 echo "Downloading $url"
+    curl -O $url
+  done
+else
+  >&2 echo "regexp '$params_regexp' did not match any build URLs"
+  exit 1
+fi
+
+jq -n "[
+  { version: { version: \"$latest_version\" } },
+  {
+    metadata: [
+      { name: \"version\", value: \"$latest_version\" },
+      { name: \"project\", value: \"$source_project\" }
+    ]
+  }
+]" >&3
