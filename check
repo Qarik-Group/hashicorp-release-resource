@@ -21,7 +21,10 @@ curl -sf https://releases.hashicorp.com/${source_project}/index.json > /dev/null
   exit 1
 )
 >&2 echo "Looking up versions of '${source_project}'"
-latest_version=$(curl -s https://releases.hashicorp.com/${source_project}/index.json | jq -r '.versions | keys | .[-1]')
+latest_version=$(curl -s https://releases.hashicorp.com/${source_project}/index.json \
+  | jq -r '.versions | keys[]' \
+  | grep -v "beta" | grep -v "rc" | grep -v "alpha" \
+  | sort -V | tail -n1)
 
 >&2 echo "Latest version $latest_version"
 
