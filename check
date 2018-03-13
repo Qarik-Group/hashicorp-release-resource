@@ -1,14 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
 
-payload=$(mktemp $TMPDIR/resource-check.XXXXXX)
+payload=$(mktemp "$TMPDIR/resource-check.XXXXXX")
 cat > "$payload" <&0
-
-version=$(jq -r '.version.version // empty' < "$payload")
 
 source_project=$(jq -r '.source.project // empty' < "$payload")
 if [[ "${source_project}X" == "X" ]]; then
@@ -16,12 +14,12 @@ if [[ "${source_project}X" == "X" ]]; then
   exit 1
 fi
 
-curl -sf https://releases.hashicorp.com/${source_project}/index.json > /dev/null || (
+curl -sf "https://releases.hashicorp.com/${source_project}/index.json" > /dev/null || (
   >&2 echo "Unknown hashicorp project '$source_project'"
   exit 1
 )
 >&2 echo "Looking up versions of '${source_project}'"
-latest_version=$(curl -s https://releases.hashicorp.com/${source_project}/index.json \
+latest_version=$(curl -s "https://releases.hashicorp.com/${source_project}/index.json" \
   | jq -r '.versions | keys[]' \
   | grep -v "beta" | grep -v "rc" | grep -v "alpha" \
   | sort -V | tail -n1)
