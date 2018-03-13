@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -7,7 +7,7 @@ exec 1>&2 # redirect all output to stderr for logging
 
 destination=$1
 
-payload=$(mktemp $TMPDIR/resource-check.XXXXXX)
+payload=$(mktemp "$TMPDIR/resource-check.XXXXXX")
 cat > "$payload" <&0
 
 version=$(jq -r '.version.version // empty' < "$payload")
@@ -24,30 +24,30 @@ fi
 
 params_regexp=$(jq -r '.params.regexp // empty' < "$payload")
 
-curl -sf https://releases.hashicorp.com/${source_project}/index.json > /dev/null || (
+curl -sf "https://releases.hashicorp.com/${source_project}/index.json" > /dev/null || (
   >&2 echo "Unknown hashicorp project '$source_project'"
   exit 1
 )
 
 >&2 echo "Fetching assets ${source_project} v${version}"
-cd $destination
+cd "$destination"
 echo "$version" > version
 echo "$source_project" > project
 
-build_urls=$(curl -s https://releases.hashicorp.com/${source_project}/index.json | jq -r ".versions[\"${version}\"].builds[].url")
+build_urls=$(curl -s "https://releases.hashicorp.com/${source_project}/index.json" | jq -r ".versions[\"${version}\"].builds[].url")
 if [[ ! -z $params_regexp ]]; then
   set +e
-  build_urls=$(echo "${build_urls}" | grep ${params_regexp})
+  build_urls=$(echo "${build_urls}" | grep "${params_regexp}")
   set -e
 fi
 if [[ ! -z $build_urls ]]; then
-  for url in "$build_urls"; do
+  for url in $build_urls; do
     >&2 echo "Downloading $url"
-    curl -O $url
+    curl -O "$url"
   done
 else
   >&2 echo "regexp '$params_regexp' did not match any build URLs"
   exit 1
 fi
 
-jq -n --arg version "${latest_version}" '{version: { version: $version }}' >&3
+jq -n --arg version "${version}" '{version: { version: $version }}' >&3
